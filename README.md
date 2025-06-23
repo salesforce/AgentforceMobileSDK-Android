@@ -230,7 +230,7 @@ class MyAppCredentialProvider(
 ```
 
 ### Option A: Full UI (with `AgentforceClient`)
-This approach is the fastest way to get a complete, out-of-the-box chat interface running in your app. The `AgentforceClient` manages the session and provides a `CopilotLauncher` Composable that presents the chat UI.
+This approach is the fastest way to get a complete, out-of-the-box chat interface running in your app. The `AgentforceClient` manages the session and provides a `AgentforceLauncherContainer` Composable that presents the chat UI.
 
 #### 1. Create an `AgentforceConfiguration` Instance
 The `AgentforceConfiguration` object holds the essential settings for connecting to your agent. You'll need to use the builder pattern to create the configuration.

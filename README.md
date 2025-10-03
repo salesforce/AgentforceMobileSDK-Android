@@ -77,11 +77,12 @@ In your top-level `settings.gradle.kts` file, add the Salesforce Maven URL:
 ```kotlin
  // settings.gradle.kts
 dependencyResolutionManagement {
-   repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-   repositories {
-      google()
-      mavenCentral()
-   }
+    repositories {
+        google()
+        mavenCentral()
+        maven { url = uri("https://opensource.salesforce.com/AgentforceMobileSDK-Android/agentforce-sdk-repository") }
+        maven { url = uri("https://s3.amazonaws.com/salesforce-async-messaging-experimental/public/android") }
+    }
 }
 ```
 
@@ -97,48 +98,12 @@ plugins {
 }
 ```
 
-#### Download Local Artifacts
-1. Download the latest release artifacts from the [AgentforceMobileService-Android Releases](https://github.com/salesforce/AgentforceMobileSDK-Android/releases)
-2. Unzip the downloaded artifacts and place the AAR files in the `libs` directory of your project
-3. The `libs` directory should be located at the same level as your app's `build.gradle.kts` file
-
 #### Dependencies
 ```kotlin
 // app/build.gradle.kts
 dependencies {
    // Agentforce SDK Dependencies
-
-   // Required AAR files
-   implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
-
-   // Required dependencies for AAR compilation
-   implementation("androidx.constraintlayout:constraintlayout:2.1.3")
-   implementation("androidx.fragment:fragment:1.4.1")
-   implementation("androidx.fragment:fragment-ktx:1.4.1")
-   implementation("androidx.appcompat:appcompat:1.3.1")
-   implementation("com.launchdarkly:okhttp-eventsource:4.1.1")
-   coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
-   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
-   implementation("com.google.android.material:material:1.3.0")
-
-   // Compose
-   api("androidx.compose.runtime:runtime-livedata:1.7.6")
-   api("androidx.compose.ui:ui:1.7.6")
-   api("androidx.compose.ui:ui-tooling:1.7.6")
-   api("androidx.compose.material:material:1.7.6")
-   api("androidx.compose.material3:material3:1.3.1")
-   api("androidx.lifecycle:lifecycle-viewmodel-compose:2.3.1")
-   api("androidx.navigation:navigation-compose:2.5.3")
-
-   // Markdown and Image Loading
-   api("io.noties.markwon:core:4.6.2")
-   api("io.noties.markwon:ext-strikethrough:4.6.2")
-   api("io.noties.markwon:html:4.6.2")
-   api("io.noties.markwon:linkify:4.6.2")
-   api("io.noties.markwon:image-coil:4.6.2")
-   api("io.noties.markwon:ext-tables:4.6.2")
-   api("io.noties.markwon:ext-tasklist:4.6.2")
-   api("io.coil-kt:coil-compose:2.2.2")
+   api("com.salesforce.android.agentforcesdk:agentforce-sdk:14.0.0")
 }
 ```
 After adding the dependencies, sync your project with the Gradle files.

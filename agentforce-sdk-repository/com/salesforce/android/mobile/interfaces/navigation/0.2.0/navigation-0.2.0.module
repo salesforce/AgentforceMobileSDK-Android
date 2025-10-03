@@ -1,0 +1,87 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.salesforce.android.mobile.interfaces",
+    "module": "navigation",
+    "version": "0.2.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.7"
+    }
+  },
+  "variants": [
+    {
+      "name": "releaseApiElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "androidJvm"
+      },
+      "files": [
+        {
+          "name": "navigation-0.2.0.aar",
+          "url": "navigation-0.2.0.aar",
+          "size": 16406,
+          "sha512": "ba8f10b7aabc49de609b480797c9fb1d92293254100a594efacc9d35ffe23959cfd729a4271cf948129aa28ceb6d34ad06cb1c57df0901b8daece9166b5db8af",
+          "sha256": "cf42baea1f33d44a4fcdafaae69c878e21256847bfd8703e7676ae3dde23b597",
+          "sha1": "11ad48f522a9c83a10d99084736584ee01418fda",
+          "md5": "d149a6dabec419485743bf162d87c28e"
+        }
+      ]
+    },
+    {
+      "name": "releaseRuntimeElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "androidJvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "1.9.22"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "navigation-0.2.0.aar",
+          "url": "navigation-0.2.0.aar",
+          "size": 16406,
+          "sha512": "ba8f10b7aabc49de609b480797c9fb1d92293254100a594efacc9d35ffe23959cfd729a4271cf948129aa28ceb6d34ad06cb1c57df0901b8daece9166b5db8af",
+          "sha256": "cf42baea1f33d44a4fcdafaae69c878e21256847bfd8703e7676ae3dde23b597",
+          "sha1": "11ad48f522a9c83a10d99084736584ee01418fda",
+          "md5": "d149a6dabec419485743bf162d87c28e"
+        }
+      ]
+    },
+    {
+      "name": "releaseSourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "androidJvm"
+      },
+      "files": [
+        {
+          "name": "navigation-0.2.0-sources.jar",
+          "url": "navigation-0.2.0-sources.jar",
+          "size": 17248,
+          "sha512": "432e3272c564162c203eb10e949190912d789fd104f9f6759a67fa83135b2dcb3aa62157d1014bb961e6e7838f5b217f64d7bc00b53d79b3e11d5693c5a32c29",
+          "sha256": "e35548073dfea5dc463b8eb4d020e00750ecde7bd7718f2090985d63171e860b",
+          "sha1": "c6ea2df56e346ed3bb7ee1830916da626d5f17f3",
+          "md5": "310e156198b746acdbdbd32ab4371646"
+        }
+      ]
+    }
+  ]
+}

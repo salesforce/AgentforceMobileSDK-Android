@@ -1,0 +1,87 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.salesforce.android.mobile.interfaces",
+    "module": "logging",
+    "version": "0.2.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.7"
+    }
+  },
+  "variants": [
+    {
+      "name": "releaseApiElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "androidJvm"
+      },
+      "files": [
+        {
+          "name": "logging-0.2.0.aar",
+          "url": "logging-0.2.0.aar",
+          "size": 1614,
+          "sha512": "202bd5be4311cd23fc384dfba6f42c789a73622981538352f6ca58bf94bf253ff9289902807b12e0d8ffdd51d92888339fd078d6d03a4f10dac8a11b2e361a6b",
+          "sha256": "693320aafc8cb5f6cf796be01d8d021b97aa2412e9d75450de3e5aa458c2e8fa",
+          "sha1": "9bb21029b8f6195e65b1fd82d96f188cc57795f2",
+          "md5": "33a4510a9e273295834ab187f055b30b"
+        }
+      ]
+    },
+    {
+      "name": "releaseRuntimeElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "androidJvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "1.9.22"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "logging-0.2.0.aar",
+          "url": "logging-0.2.0.aar",
+          "size": 1614,
+          "sha512": "202bd5be4311cd23fc384dfba6f42c789a73622981538352f6ca58bf94bf253ff9289902807b12e0d8ffdd51d92888339fd078d6d03a4f10dac8a11b2e361a6b",
+          "sha256": "693320aafc8cb5f6cf796be01d8d021b97aa2412e9d75450de3e5aa458c2e8fa",
+          "sha1": "9bb21029b8f6195e65b1fd82d96f188cc57795f2",
+          "md5": "33a4510a9e273295834ab187f055b30b"
+        }
+      ]
+    },
+    {
+      "name": "releaseSourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "androidJvm"
+      },
+      "files": [
+        {
+          "name": "logging-0.2.0-sources.jar",
+          "url": "logging-0.2.0-sources.jar",
+          "size": 2419,
+          "sha512": "10d0f8a1ff5421fa2f7892f0359d7ea3c10ddcaeb1fcfc6f88ed92ce6d1c8360698f500ea9358859116011eaa12fdac58dea5b67fa2b3b08d9d5610da69e4c41",
+          "sha256": "972d2c846ed58fb135cb98ed34d9144598a0ff332522a3e45cbaee8eefec82d1",
+          "sha1": "a54ed56d7fd7aae56b57145d7fbbb90f54418813",
+          "md5": "4084a2baa59c76752f0d24863ac2edc0"
+        }
+      ]
+    }
+  ]
+}

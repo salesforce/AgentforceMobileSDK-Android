@@ -1,0 +1,87 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.salesforce.android.mobile.interfaces",
+    "module": "cache",
+    "version": "0.2.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.7"
+    }
+  },
+  "variants": [
+    {
+      "name": "releaseApiElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "androidJvm"
+      },
+      "files": [
+        {
+          "name": "cache-0.2.0.aar",
+          "url": "cache-0.2.0.aar",
+          "size": 1647,
+          "sha512": "944c34903aa9737588dd4bb0fdea882d6196850743efc93c3e01184d58b2ef4500c558c1876be83728f8f3b2f123ada1dbd738355a6871b1f494e8048d64cfb7",
+          "sha256": "1a8aee6dbf5b4976f29a9c691d218024dbe5f094ce87cad077e63910f2561938",
+          "sha1": "1a4ae5432d6790bea5afda657197739c961e0738",
+          "md5": "bfaf9929998983701b433785651fe97a"
+        }
+      ]
+    },
+    {
+      "name": "releaseRuntimeElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "androidJvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "1.9.22"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "cache-0.2.0.aar",
+          "url": "cache-0.2.0.aar",
+          "size": 1647,
+          "sha512": "944c34903aa9737588dd4bb0fdea882d6196850743efc93c3e01184d58b2ef4500c558c1876be83728f8f3b2f123ada1dbd738355a6871b1f494e8048d64cfb7",
+          "sha256": "1a8aee6dbf5b4976f29a9c691d218024dbe5f094ce87cad077e63910f2561938",
+          "sha1": "1a4ae5432d6790bea5afda657197739c961e0738",
+          "md5": "bfaf9929998983701b433785651fe97a"
+        }
+      ]
+    },
+    {
+      "name": "releaseSourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "androidJvm"
+      },
+      "files": [
+        {
+          "name": "cache-0.2.0-sources.jar",
+          "url": "cache-0.2.0-sources.jar",
+          "size": 3351,
+          "sha512": "34fc3256d55828d434e0397ba154f957ed7120ab2157eb96f5e4c10843b2daa9209eaaa2e631c6bf16b6b378e785d7cb8bb4c69e340c5241c54e17e8058772d1",
+          "sha256": "b5493a3956447f43f75e44d0a3c5733e820d08a5d6ef0d2a460b06058ec84f01",
+          "sha1": "316c0e48826139337224ec13aab06efb01559a7e",
+          "md5": "eda12b144fecfcc1e70100167b03b5db"
+        }
+      ]
+    }
+  ]
+}

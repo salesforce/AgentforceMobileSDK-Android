@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.salesforce.android.agentforcesdk</groupId>
+  <artifactId>agentforce-sdk</artifactId>
+  <versioning>
+    <latest>14.20.0-experimental</latest>
+    <release>14.20.0-experimental</release>
+    <versions>
+      <version>14.20.0-experimental</version>
+    </versions>
+    <lastUpdated>20251022174910</lastUpdated>
+  </versioning>
+</metadata>

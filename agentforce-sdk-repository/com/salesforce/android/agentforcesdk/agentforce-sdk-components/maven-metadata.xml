@@ -3,11 +3,11 @@
   <groupId>com.salesforce.android.agentforcesdk</groupId>
   <artifactId>agentforce-sdk-components</artifactId>
   <versioning>
-    <latest>14.20.0</latest>
-    <release>14.20.0</release>
+    <latest>14.38.2</latest>
+    <release>14.38.2</release>
     <versions>
-      <version>14.20.0</version>
+      <version>14.38.2</version>
     </versions>
-    <lastUpdated>20251113000129</lastUpdated>
+    <lastUpdated>20251201230651</lastUpdated>
   </versioning>
 </metadata>

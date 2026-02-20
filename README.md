@@ -1,5 +1,9 @@
 # Agentforce Mobile SDK - Integration Guide
 
+> **Note**: This documentation reflects the latest SDK version with significant API updates. If you're migrating from an earlier version, please review the changes carefully.
+
+Full integration guide available in the [Agentforce Mobile SDK Developer Guide](https://developer.salesforce.com/docs/ai/agentforce/guide/agent-sdk.html)
+
 ## Getting Started with Agentforce
 
 The Agentforce Mobile SDK empowers you to integrate Salesforce's feature-rich, trusted AI platform directly into your native iOS and Android mobile applications. By leveraging the Agentforce Mobile SDK, you can deliver cutting-edge, intelligent, and conversational AI experiences to your mobile users, enhancing engagement and providing seamless access to information and actions.
@@ -82,6 +86,7 @@ dependencyResolutionManagement {
         mavenCentral()
         maven { url = uri("https://jitpack.io") }
         maven { url = uri("https://opensource.salesforce.com/AgentforceMobileSDK-Android/agentforce-sdk-repository") }
+        maven { url = uri("https://s3.amazonaws.com/inapp.salesforce.com/public/android") }
         maven { url = uri("https://s3.amazonaws.com/salesforce-async-messaging-experimental/public/android") }
     }
 }
@@ -100,13 +105,32 @@ plugins {
 ```
 
 #### Dependencies
+
+Add the following to your module's `build.gradle.kts`:
+
 ```kotlin
-// app/build.gradle.kts
 dependencies {
    // Agentforce SDK Dependencies
-   api("com.salesforce.android.agentforcesdk:agentforce-sdk:14.0.0")
+   api("com.salesforce.android.agentforcesdk:agentforce-sdk:14.97.1")
 }
 ```
+
+##### Core Library Desugaring
+
+If your module doesn't already have core library desugaring configured, add the following to your `build.gradle.kts`:
+
+```kotlin
+android {
+    compileOptions {
+        isCoreLibraryDesugaringEnabled = true
+    }
+}
+
+dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+}
+```
+
 After adding the dependencies, sync your project with the Gradle files.
 
 ### Implement Core Service Interfaces
@@ -252,119 +276,209 @@ Optional components include:
 - `permission`: For permission handling
 
 #### 2. Initialize the SDK and Build the View
-Instantiate `AgentforceClient` and add the `AgentforceLauncherContainer` to your Composable UI.
 
-##### Instantiate `AgentforceClient`
-Create and retain an instance of `AgentforceClient`. It's best to hold this in a lifecycle-aware component, like a `ViewModel`, to ensure the conversation state persists across configuration changes.
+##### Implement an Auth Credential Provider
+
+Create an implementation of `AgentforceAuthCredentialProvider` to supply authentication credentials to the SDK.
+
+**For Employee Agents (OAuth):**
 
 ```kotlin
-import androidx.lifecycle.ViewModel
+import com.salesforce.android.agentforceservice.AgentforceAuthCredentialProvider
+import com.salesforce.android.agentforceservice.AgentforceAuthCredentials
+
+class MyAuthCredentialProvider : AgentforceAuthCredentialProvider {
+    override fun getAuthCredentials(): AgentforceAuthCredentials {
+        return AgentforceAuthCredentials.OAuth(
+            authToken = "your-oauth-token",
+            orgId = "your-org-id",
+            userId = "your-user-id"
+        )
+    }
+}
+```
+
+**For Service Agents (Guest / Unauthenticated):**
+
+```kotlin
+class MyGuestCredentialProvider : AgentforceAuthCredentialProvider {
+    override fun getAuthCredentials(): AgentforceAuthCredentials {
+        return AgentforceAuthCredentials.Guest(url = "https://your-instance.salesforce.com")
+    }
+}
+```
+
+##### Build the Configuration
+
+Use `AgentforceConfiguration.builder()` to create a configuration with your auth provider:
+
+```kotlin
+import com.salesforce.android.agentforcesdkimpl.configuration.AgentforceConfiguration
+
+val configuration = AgentforceConfiguration.builder(
+    authCredentialProvider = myAuthCredentialProvider
+)
+    .setApplication(application)
+    .setSalesforceDomain("https://your-instance.salesforce.com")
+    .setThemeManager(createCustomAgentforceThemeManager(themeMode = AgentforceThemeMode.SYSTEM))
+    .setLogger(myLogger)           // optional
+    .setViewProvider(myViewProvider) // optional: register custom component renderers
+    .build()
+```
+
+##### Create an AgentforceMode
+
+The SDK supports two primary modes:
+
+**Employee Agent (FullConfig):**
+
+```kotlin
+import com.salesforce.android.agentforcesdkimpl.configuration.AgentforceMode
+
+val agentforceMode = AgentforceMode.FullConfig(configuration)
+```
+
+**Service Agent:**
+
+```kotlin
+import com.salesforce.android.agentforcesdkimpl.configuration.AgentforceMode
+import com.salesforce.android.agentforcesdkimpl.configuration.ServiceAgentConfiguration
+import com.salesforce.android.agentforceservice.miaw.AuthorizationContext
+import com.salesforce.android.agentforceservice.miaw.AuthorizationMethod
+
+val serviceAgentConfig = ServiceAgentConfiguration.builder(
+    serviceApiURL = "https://your-service-api-url",
+    organizationId = "your-org-id",
+    esDeveloperName = "your-es-developer-name",
+    authorizationContext = AuthorizationContext(
+        authorizationMethod = AuthorizationMethod.UNVERIFIED
+    )
+).build()
+
+val agentforceMode = AgentforceMode.ServiceAgent(
+    serviceAgentConfiguration = serviceAgentConfig,
+    agentforceConfiguration = configuration // optional: pass configuration for theming, logger, etc.
+)
+```
+
+##### Initialize the Client and Start a Conversation
+
+```kotlin
 import com.salesforce.android.agentforcesdkimpl.AgentforceClient
-import com.salesforce.android.agentforceservice.AgentforceServiceProvider
 
-class MyViewModel : ViewModel() {
-   // Retain the client in a ViewModel
-   val agentforceClient: AgentforceClient
+val agentforceClient = AgentforceClient()
+agentforceClient.init(
+    authCredentialProvider = configuration.authCredentialProvider,
+    agentforceMode = agentforceMode,
+    application = application
+)
 
-   init {
-      // Assume you have access to your config and interface implementations
-      val serviceProvider = AgentforceServiceProvider(
-         network = MyAppNetwork(okHttpClient), // Your implementation
-         credentialProvider = MyAppCredentialProvider(userSession) // Your implementation 
-         // Pass optional implementations here (logger, delegate, etc.)
-      )
-
-      agentforceClient = AgentforceClient(
-         configuration = agentforceConfig, // Your config from the previous step
-         serviceProvider = serviceProvider
-      )
-   }
-}
+// Start a conversation (optionally pass an agentId)
+val conversation = agentforceClient.startAgentforceConversation()
+// or with a specific agent:
+// val conversation = agentforceClient.startAgentforceConversation(agentId = "your-agent-id")
 ```
 
-##### Build and Present the View
-Use the `AgentforceLauncherContainer` Composable in your screen. It displays a Floating Action Button (FAB) that, when tapped, presents the full chat container.
+##### Display the Chat UI
+
+Use the `AgentforceConversationContainer` Composable provided by `AgentforceClient`:
 
 ```kotlin
 import androidx.compose.runtime.Composable
-import com.salesforce.android.agentforcesdk.ui.AgentforceLauncherContainer
-import androidx.lifecycle.viewmodel.compose.viewModel
-
-@Composable
-fun MyScreen(viewModel: MyViewModel = viewModel()) {
-   // ... Your existing screen content (e.g., inside a Scaffold)
-
-   // Add the Agentforce Launcher
-   AgentforceLauncherContainer(client = viewModel.agentforceClient)
-}
-```
-
-##### Starting a Conversation
-
-Once you have initialized the `AgentforceClient`, you can start a conversation with an agent using the `startAgentforceConversation` method.
-
-```kotlin
-// Start the conversation
-agentforceClient.startAgentforceConversation()
-
-// Option 1: Get the conversation session using fetchAgentforceSession
-val session = agentforceClient.fetchAgentforceSession(YOUR_AGENT_ID)
-
-// Option 2: Create a new AgentforceConversation object
-val conversation = AgentforceConversation(
-   configuration = configuration,
-   conversationService = agentforceClient.conversationService
-)
-```
-
-Both approaches start a conversation and provide access to an `AgentforceConversation` object, which represents a single conversation with an agent. You can use this session/conversation to interact with the agent and manage the conversation state.
-
-##### Displaying the Chat UI
-
-To display the chat UI, you can use the `AgentforceConversationContainer` Composable. This Composable provides the complete chat interface that you can integrate into your app.
-
-First, create an `AgentforceConversation` object:
-
-```kotlin
-// Create the conversation object
-val conversation = AgentforceConversation(
-   configuration = configuration,
-   conversationService = agentforceClient.conversationService
-)
-```
-
-Then use the `AgentforceConversationContainer` Composable:
-
-```kotlin
-import androidx.compose.runtime.Composable
+import com.salesforce.android.agentforcesdkimpl.AgentforceClient
 import com.salesforce.android.agentforcesdkimpl.AgentforceConversation
 
 @Composable
-fun MyChatScreen(conversation: AgentforceConversation, agentforceClient: AgentforceClient) {
-   agentforceClient.AgentforceConversationContainer(
-      conversation = conversation,
-      onClose = {
-         // Handle chat view close
-      }
-   )
+fun MyChatScreen(
+    agentforceClient: AgentforceClient,
+    conversation: AgentforceConversation,
+    onClose: () -> Unit
+) {
+    agentforceClient.AgentforceConversationContainer(
+        conversation = conversation,
+        onClose = onClose
+    )
 }
 ```
 
-The `AgentforceConversationContainer` Composable takes the following parameters:
+The `AgentforceConversationContainer` Composable renders the full chat interface including the top app bar, message list, and input field. The `onClose` callback is invoked when the user closes the chat view.
 
--   `conversation`: The `AgentforceConversation` object that you created
--   `onClose`: A lambda that will be called when the user closes the chat view
+##### Full Example (Activity)
 
-You can also use the `AgentforceLauncherContainer` for a floating action button approach:
+Below is a minimal Activity that shows/hides the chat UI:
 
 ```kotlin
-@Composable
-fun MyScreen() {
-   // Your existing screen content
+class MyActivity : ComponentActivity() {
 
-   // Add the Agentforce Launcher (FAB)
-   AgentforceLauncherContainer(client = agentforceClient)
+    private var agentforceClient: AgentforceClient? = null
+    private var conversation: AgentforceConversation? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // Initialize the Agentforce client and start a conversation
+        initializeAgentforce()
+
+        setContent {
+            var showChat by rememberSaveable { mutableStateOf(false) }
+
+            Box(Modifier.fillMaxSize()) {
+                // Your app content
+                Button(onClick = { showChat = true }) {
+                    Text("Open Chat")
+                }
+
+                // Show chat overlay
+                if (showChat) {
+                    conversation?.let { conv ->
+                        agentforceClient?.AgentforceConversationContainer(
+                            conversation = conv,
+                            onClose = { showChat = false }
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun initializeAgentforce() {
+        val authProvider = MyAuthCredentialProvider()
+
+        val configuration = AgentforceConfiguration.builder(
+            authCredentialProvider = authProvider
+        )
+            .setApplication(application)
+            .setSalesforceDomain("https://your-instance.salesforce.com")
+            .build()
+
+        val mode = AgentforceMode.FullConfig(configuration)
+
+        agentforceClient = AgentforceClient().also {
+            it.init(
+                authCredentialProvider = authProvider,
+                agentforceMode = mode,
+                application = application
+            )
+        }
+        conversation = agentforceClient?.startAgentforceConversation()
+    }
 }
+```
+
+##### Optional: Customize the Theme
+
+Use `createCustomAgentforceThemeManager` to customize colors, typography, and theme mode:
+
+```kotlin
+import com.salesforce.android.agentforcesdk.components.theme.createCustomAgentforceThemeManager
+import com.salesforce.android.agentforcesdk.components.theme.AgentforceThemeMode
+
+val themeManager = createCustomAgentforceThemeManager(
+    themeMode = AgentforceThemeMode.SYSTEM  // or LIGHT / DARK
+)
+
+// Pass to configuration builder:
+// .setThemeManager(themeManager)
 ```
 
 ## Basic Use Cases

@@ -111,7 +111,7 @@ Add the following to your module's `build.gradle.kts`:
 ```kotlin
 dependencies {
    // Agentforce SDK Dependencies
-   api("com.salesforce.android.agentforcesdk:agentforce-sdk:14.97.1")
+   api("com.salesforce.android.agentforcesdk:agentforce-sdk:14.146.2")
 }
 ```
 

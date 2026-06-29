@@ -122,7 +122,8 @@ dependencyResolutionManagement {
 ```kotlin
 plugins {
     id("com.android.application")
-    id("kotlin-android")
+    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")
     id("kotlin-kapt")
     id("kotlinx-serialization")
 }
@@ -142,11 +143,17 @@ dependencies {
 }
 ```
 
+On Kotlin 2.0+, `composeOptions.kotlinCompilerExtensionVersion` is replaced
+by the `org.jetbrains.kotlin.plugin.compose` Gradle plugin. Apply that
+plugin (matched to the project's Kotlin version) and remove any leftover
+`composeOptions { ... }` block from the consuming module — AGP errors when
+both are present.
+
 The consumer needs:
 
 - **Min SDK ≥ 29** (Android 10).
 - **Compose enabled** in their app module — the chat UI is `@Composable`.
-- **Kotlin ≥ 1.9.22**, AGP **8.9.1+**, **Android Studio Meerkat 2024.3.1+**.
+- **Kotlin ≥ 2.1** (recommend 2.2.0), AGP **8.9.1+**, **Android Studio Meerkat 2024.3.1+**. `agentforce-sdk:15.0.2` is published with Kotlin metadata 2.1.0/2.2.0; consumers on Kotlin 1.9.x fail kapt with a metadata-version mismatch.
 
 If their app is not Compose-based, surface this and ask whether they want to add Compose to the existing module. The SDK does not ship a View-based chat surface.
 

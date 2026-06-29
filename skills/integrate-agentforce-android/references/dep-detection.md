@@ -50,10 +50,16 @@ dependencyResolutionManagement {
 
 ## App-module `build.gradle.kts`
 
+On Kotlin 2.0+, the legacy `composeOptions.kotlinCompilerExtensionVersion`
+setting is obsolete — the new compiler model is shipped as a dedicated
+Gradle plugin (`org.jetbrains.kotlin.plugin.compose`) that replaces it.
+Apply that plugin instead; AGP errors out if `composeOptions` is also set.
+
 ```kotlin
 plugins {
     id("com.android.application")
-    id("kotlin-android")
+    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")
     id("kotlin-kapt")
     id("kotlinx-serialization")
 }
@@ -75,9 +81,6 @@ android {
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.11"
-    }
 }
 
 dependencies {
@@ -89,6 +92,11 @@ dependencies {
 }
 ```
 
+Make sure the root `build.gradle.kts` pins `kotlin-gradle-plugin`,
+`kotlin-serialization`, and `compose-compiler-gradle-plugin` to the same
+Kotlin version (see floors below) so kapt doesn't blow up with a metadata
+mismatch.
+
 ## Compose enablement check
 
 The Agentforce SDK's UI is `@Composable`. If the consumer's app module does not have `buildFeatures.compose = true`, the chat container won't render. Surface this and ask whether to add Compose to the existing module before scaffolding `AgentforceChatHost.kt`.
@@ -96,7 +104,7 @@ The Agentforce SDK's UI is `@Composable`. If the consumer's app module does not 
 ## Min SDK / Kotlin / AGP requirements
 
 - **Min SDK:** 29 (Android 10).
-- **Kotlin:** 1.9.22 or higher.
+- **Kotlin:** **2.1 or higher** (recommend 2.2.0). `agentforce-sdk:15.0.2` is published with Kotlin metadata version 2.1.0/2.2.0; consumers on Kotlin 1.9.x fail kapt with `Module was compiled with an incompatible version of Kotlin. The binary version of its metadata is 2.1.0/2.2.0, expected version is 1.9.0`. Bump `kotlin-gradle-plugin`, `kotlin-serialization`, and `compose-compiler-gradle-plugin` together.
 - **Android Gradle Plugin:** 8.9.1+ (mostly for desugar_jdk_libs:2.1.5 support).
 - **Android Studio:** Meerkat 2024.3.1 or newer.
 

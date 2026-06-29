@@ -7,7 +7,6 @@ import android.util.Log
 import com.salesforce.android.agentforcesdkimpl.AgentConversation
 import com.salesforce.android.agentforcesdkimpl.AgentforceUIDelegate
 import com.salesforce.android.agentforceservice.AgentforceUtterance
-import com.salesforce.android.agentforceservice.conversationservice.data.AgentforceMessage
 
 class AppAgentforceUIDelegate : AgentforceUIDelegate {
 
@@ -25,12 +24,5 @@ class AppAgentforceUIDelegate : AgentforceUIDelegate {
 
     override fun userDidSwitchAgents(newConversation: AgentConversation) {
         // TODO: react to multi-agent handoff (e.g. update header, log event).
-    }
-
-    override fun didReceiveResponse(
-        agentforceMessage: AgentforceMessage,
-        conversation: AgentConversation
-    ) {
-        // TODO: react to incoming agent messages if you need server-side analytics.
     }
 }

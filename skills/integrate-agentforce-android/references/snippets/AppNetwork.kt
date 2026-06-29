@@ -24,21 +24,20 @@ class AppNetwork(
         withContext(Dispatchers.IO) {
             val httpRequest = Request.Builder().apply {
                 url(request.path)
-                request.headers.forEach { (key, value) -> addHeader(key, value) }
+                request.additionalHttpHeaders.forEach { entry ->
+                    addHeader(entry.key, entry.value)
+                }
+
+                val mediaType = request.contentType?.toMediaType()
+                    ?: "application/json".toMediaType()
 
                 when (request.method) {
                     NetworkRequest.Method.GET -> get()
                     NetworkRequest.Method.DELETE -> delete()
-                    NetworkRequest.Method.POST -> {
-                        val mediaType = request.contentType?.toMediaType()
-                            ?: "application/json".toMediaType()
-                        post(request.body?.toRequestBody(mediaType))
-                    }
-                    NetworkRequest.Method.PUT -> {
-                        val mediaType = request.contentType?.toMediaType()
-                            ?: "application/json".toMediaType()
-                        put(request.body?.toRequestBody(mediaType))
-                    }
+                    NetworkRequest.Method.POST ->
+                        post((request.body ?: ByteArray(0)).toRequestBody(mediaType))
+                    NetworkRequest.Method.PUT ->
+                        put((request.body ?: ByteArray(0)).toRequestBody(mediaType))
                     else -> throw IllegalArgumentException(
                         "Unsupported HTTP method: ${request.method}"
                     )
@@ -47,13 +46,11 @@ class AppNetwork(
 
             okHttpClient.newCall(httpRequest).execute().use { response ->
                 NetworkResponse(
-                    body = response.body?.string()?.toByteArray(),
+                    request = request,
                     statusCode = response.code,
-                    headers = response.headers.toMap()
+                    headers = response.headers.toMultimap(),
+                    body = response.body?.string()?.toByteArray()
                 )
             }
         }
-
-    private fun okhttp3.Headers.toMap(): Map<String, String> =
-        names().associateWith { name -> get(name).orEmpty() }
 }

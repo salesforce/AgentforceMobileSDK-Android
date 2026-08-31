@@ -54,6 +54,8 @@ AgentforceConfiguration.builder(authCredentialProvider)
 
 `Network` and `Navigation` are required; `Logger` is technically optional but you'll have no visibility into SDK behavior without one.
 
+Current `Navigation` also includes `goto(destination, target, replace)`. Implement it even if the app initially delegates to `goto(destination, replace)`; otherwise the scaffold does not satisfy the published interface.
+
 ## Viewing logs
 
 In Android Studio's **Logcat** tab, filter on:

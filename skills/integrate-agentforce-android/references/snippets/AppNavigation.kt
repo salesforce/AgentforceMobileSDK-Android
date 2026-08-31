@@ -5,6 +5,7 @@
 package {{PACKAGE}}.agentforce
 
 import com.salesforce.android.mobile.interfaces.navigation.Navigation
+import com.salesforce.android.mobile.interfaces.navigation.NavigationTarget
 import com.salesforce.android.mobile.interfaces.navigation.destination.App
 import com.salesforce.android.mobile.interfaces.navigation.destination.Destination
 
@@ -16,6 +17,16 @@ class AppNavigation : Navigation {
 
     override fun goto(destination: Destination, replace: Boolean) {
         // TODO: handle navigation requests from the agent (with replace semantics).
+    }
+
+    override fun goto(
+        destination: Destination,
+        target: NavigationTarget,
+        replace: Boolean
+    ) {
+        // TODO: route to the requested pane/target. Falling back to the
+        // non-targeted overload is a safe starting point.
+        goto(destination, replace)
     }
 
     override fun openApp(app: App): App.OpenResult = App.OpenResult.NOTOPEN

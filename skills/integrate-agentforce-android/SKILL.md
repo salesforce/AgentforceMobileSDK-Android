@@ -137,11 +137,11 @@ android {
 }
 
 dependencies {
-    implementation("com.salesforce.android.agentforcesdk:agentforce-sdk:15.130.4")
+    api("com.salesforce.android.agentforcesdk:agentforce-sdk:15.130.4")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 
     // Optional: voice support
-    // implementation("com.salesforce.android.agentforcesdk:agentforce-sdk-voice:15.130.4")
+    // api("com.salesforce.android.agentforcesdk:agentforce-sdk-voice:15.130.4")
 }
 ```
 

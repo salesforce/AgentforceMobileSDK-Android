@@ -81,11 +81,11 @@ android {
 }
 
 dependencies {
-    implementation("com.salesforce.android.agentforcesdk:agentforce-sdk:15.130.4")
+    api("com.salesforce.android.agentforcesdk:agentforce-sdk:15.130.4")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 
     // Optional: voice support
-    // implementation("com.salesforce.android.agentforcesdk:agentforce-sdk-voice:15.130.4")
+    // api("com.salesforce.android.agentforcesdk:agentforce-sdk-voice:15.130.4")
 }
 ```
 
@@ -107,7 +107,7 @@ The Agentforce SDK's UI is `@Composable`. If the consumer's app module does not 
 If the consumer wants voice input, add:
 
 ```kotlin
-implementation("com.salesforce.android.agentforcesdk:agentforce-sdk-voice:15.130.4")
+api("com.salesforce.android.agentforcesdk:agentforce-sdk-voice:15.130.4")
 ```
 
 …and configure the voice module on the configuration builder:

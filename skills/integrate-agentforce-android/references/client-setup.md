@@ -112,6 +112,8 @@ If you call `startAgentforceConversation()` without an `agentId` on the FullConf
 |---|---|
 | `conversation.sendUtterance(utterance, attachment)` | Send a message. `attachment` is `AgentforceAttachment?`. |
 | `conversation.conversationManager.sendMessage(...)` | Lower-level streaming entry point — returns a `ReceiveChannel<AgentforceComponent>`. |
+| `conversation.sessionId` | `StateFlow<String>` for observing and persisting the current resumable session ID. |
+| `conversation.conversationState` | `StateFlow<AgentforceConversationState>`; includes `ENDED` in current releases. |
 | `client.clearStorage(esDeveloperName, clearAuthorization)` suspend | Service-Agent only. Clears MIAW/CoreSDK state for that deployment. |
 
 Subscribe to messages by collecting the channel returned from `conversationManager.sendMessage(...)` (Headless / Option B), or just let `AgentforceConversationContainer` render the streamed UI for you (Option A — what most consumers want).

@@ -50,10 +50,7 @@ dependencyResolutionManagement {
 
 ## App-module `build.gradle.kts`
 
-On Kotlin 2.0+, the legacy `composeOptions.kotlinCompilerExtensionVersion`
-setting is obsolete — the new compiler model is shipped as a dedicated
-Gradle plugin (`org.jetbrains.kotlin.plugin.compose`) that replaces it.
-Apply that plugin instead; AGP errors out if `composeOptions` is also set.
+The example below is for Kotlin 2.x. On Kotlin 2.0+, the legacy `composeOptions.kotlinCompilerExtensionVersion` setting is obsolete; apply `org.jetbrains.kotlin.plugin.compose` at the same version as Kotlin. On Kotlin 1.9.x, keep the project's compatible legacy Compose compiler configuration and omit that plugin.
 
 ```kotlin
 plugins {
@@ -84,18 +81,15 @@ android {
 }
 
 dependencies {
-    api("com.salesforce.android.agentforcesdk:agentforce-sdk:15.0.2")
+    api("com.salesforce.android.agentforcesdk:agentforce-sdk:15.130.4")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 
     // Optional: voice support
-    // api("com.salesforce.android.agentforcesdk:agentforce-sdk-voice:15.0.2")
+    // api("com.salesforce.android.agentforcesdk:agentforce-sdk-voice:15.130.4")
 }
 ```
 
-Make sure the root `build.gradle.kts` pins `kotlin-gradle-plugin`,
-`kotlin-serialization`, and `compose-compiler-gradle-plugin` to the same
-Kotlin version (see floors below) so kapt doesn't blow up with a metadata
-mismatch.
+Keep the Kotlin Gradle plugin, serialization plugin, kapt/KSP, and Compose compiler plugin on a compatible toolchain. Do not work around metadata errors with `-Xskip-metadata-version-check`.
 
 ## Compose enablement check
 
@@ -104,7 +98,7 @@ The Agentforce SDK's UI is `@Composable`. If the consumer's app module does not 
 ## Min SDK / Kotlin / AGP requirements
 
 - **Min SDK:** 29 (Android 10).
-- **Kotlin:** **2.1 or higher** (recommend 2.2.0). `agentforce-sdk:15.0.2` is published with Kotlin metadata version 2.1.0/2.2.0; consumers on Kotlin 1.9.x fail kapt with `Module was compiled with an incompatible version of Kotlin. The binary version of its metadata is 2.1.0/2.2.0, expected version is 1.9.0`. Bump `kotlin-gradle-plugin`, `kotlin-serialization`, and `compose-compiler-gradle-plugin` together.
+- **Kotlin:** **1.9.22 or higher** per the public SDK prerequisites. Prefer a consistent Kotlin 2.x setup for new projects. If the chosen artifact reports a newer metadata version than the app understands, upgrade the Kotlin, serialization, kapt/KSP, and Compose plugins together.
 - **Android Gradle Plugin:** 8.9.1+ (mostly for desugar_jdk_libs:2.1.5 support).
 - **Android Studio:** Meerkat 2024.3.1 or newer.
 
@@ -113,16 +107,15 @@ The Agentforce SDK's UI is `@Composable`. If the consumer's app module does not 
 If the consumer wants voice input, add:
 
 ```kotlin
-api("com.salesforce.android.agentforcesdk:agentforce-sdk-voice:15.0.2")
+api("com.salesforce.android.agentforcesdk:agentforce-sdk-voice:15.130.4")
 ```
 
 …and configure the voice module on the configuration builder:
 
 ```kotlin
-.setVoiceModule(
-    uiProvider = AgentforceVoiceUIProvider(),
-    employeeAgentFactory = AgentforceVoiceProviderFactory(),
-    serviceAgentConfig = null  // or a ServiceAgentVoiceConfig if you also want voice on MIAW
+.setAgentforceVoiceModule(
+    AgentforceVoiceProviderFactory(),
+    AgentforceVoiceUIProvider()
 )
 ```
 

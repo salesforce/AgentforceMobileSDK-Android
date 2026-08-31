@@ -1,6 +1,6 @@
 ---
 name: integrate-agentforce-android
-description: Integrate the Agentforce Mobile SDK into an existing Android app. Walks the consumer through use-case discovery, picks the right auth flow (employee OAuth/JWT vs public service agent vs guest), adds the Maven dependencies, and scaffolds Kotlin files for the credential provider, AgentforceClient holder, Logger, Network, UI delegate, and a Compose chat host. Use when a developer asks to "add Agentforce", "integrate the Agentforce SDK", "set up Agentforce chat", or wire an Android app up to a Salesforce agent.
+description: Integrate the public Agentforce Mobile SDK into an existing Android app. Walk through use-case and auth discovery, add the current Maven dependencies, and scaffold Kotlin implementations for credentials, AgentforceClient lifetime, logging, networking, navigation, UI callbacks, and a Compose chat host. Use when a developer asks to add Agentforce, install AgentforceSDK, set up Agentforce chat or voice, migrate an older integration, or connect an Android app to a Salesforce employee or service agent.
 ---
 
 # integrate-agentforce-android
@@ -13,6 +13,8 @@ This skill walks a consumer through wiring the **Agentforce Mobile SDK** into th
 - **Discover before deciding.** Always run Phase 1 (use-case discovery) before recommending an auth flow. Don't ask "which auth flow do you want?" — most consumers don't know.
 - **Don't suggest `Guest(url)` or `OrgJWT` by default.** They're only correct in specific situations. Recommend the path that matches the user's described use case.
 - **Hold the `AgentforceClient` for the conversation's lifetime.** Stash it in your Application or a long-lived ViewModel; if it's recreated mid-chat the conversation is lost.
+- **Default to the latest stable public release.** Use `15.130.4` (Agentforce Mobile 262.1.3) for both core and voice unless the project already pins another compatible version. Keep all Agentforce artifacts on exactly the same version.
+- **Match the project's Kotlin/Compose toolchain.** On Kotlin 2.x, apply `org.jetbrains.kotlin.plugin.compose` at the same Kotlin version. On Kotlin 1.9.x, preserve the compatible legacy Compose compiler configuration instead of adding the Kotlin 2.x plugin.
 - **Use `AskUserQuestion` for branching choices.** Don't free-text prompts — give 2–4 explicit options.
 - **Substitute placeholders, don't leave `{{TOKENS}}` in the final files.** Collect values up front; if the user can't provide a value, leave a clearly-marked `// TODO:` comment instead.
 
@@ -135,25 +137,21 @@ android {
 }
 
 dependencies {
-    api("com.salesforce.android.agentforcesdk:agentforce-sdk:15.0.2")
+    api("com.salesforce.android.agentforcesdk:agentforce-sdk:15.130.4")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 
     // Optional: voice support
-    // api("com.salesforce.android.agentforcesdk:agentforce-sdk-voice:15.0.2")
+    // api("com.salesforce.android.agentforcesdk:agentforce-sdk-voice:15.130.4")
 }
 ```
 
-On Kotlin 2.0+, `composeOptions.kotlinCompilerExtensionVersion` is replaced
-by the `org.jetbrains.kotlin.plugin.compose` Gradle plugin. Apply that
-plugin (matched to the project's Kotlin version) and remove any leftover
-`composeOptions { ... }` block from the consuming module — AGP errors when
-both are present.
+The plugin block above shows the Kotlin 2.x path. On Kotlin 2.0+, `composeOptions.kotlinCompilerExtensionVersion` is replaced by the `org.jetbrains.kotlin.plugin.compose` Gradle plugin; apply it at the project's Kotlin version and remove the obsolete `composeOptions` block. On Kotlin 1.9.x, do not add that plugin—keep the project's compatible Compose compiler extension.
 
 The consumer needs:
 
 - **Min SDK ≥ 29** (Android 10).
 - **Compose enabled** in their app module — the chat UI is `@Composable`.
-- **Kotlin ≥ 2.1** (recommend 2.2.0), AGP **8.9.1+**, **Android Studio Meerkat 2024.3.1+**. `agentforce-sdk:15.0.2` is published with Kotlin metadata 2.1.0/2.2.0; consumers on Kotlin 1.9.x fail kapt with a metadata-version mismatch.
+- **Kotlin ≥ 1.9.22**, AGP **8.9.1+**, **Android Studio Meerkat 2024.3.1+**. Prefer a consistent Kotlin 2.x toolchain for new projects. If dependency sync reports a Kotlin metadata mismatch, upgrade Kotlin, serialization, kapt/KSP, and the Compose compiler plugin together rather than suppressing the metadata check.
 
 If their app is not Compose-based, surface this and ask whether they want to add Compose to the existing module. The SDK does not ship a View-based chat surface.
 
@@ -206,7 +204,7 @@ If the consumer already uses Hilt or another DI framework, surface that instead 
 Tell the user:
 
 1. **Sync Gradle** (`./gradlew :app:dependencies` or via Android Studio). Expect a clean sync.
-2. **Build**: `./gradlew :app:assembleDebug`. If it fails on `BUILD_LIBRARY_FOR_DISTRIBUTION`-equivalent or duplicate-class errors, check the Maven repo order in `settings.gradle.kts` (Salesforce repos must come before `mavenCentral()` if you hit conflicts).
+2. **Build**: `./gradlew :app:assembleDebug`. If it fails with duplicate classes, confirm every Agentforce artifact uses `15.130.4` and inspect `./gradlew :app:dependencyInsight --dependency agentforce-sdk`.
 3. **Holder lifetime**: confirm `AgentforceHolder` is owned at the `Application` level (or as a Hilt singleton). If it's instantiated inside an Activity, the conversation will reset on rotation.
 4. **Run on device/emulator**, navigate to the chat surface, send a test utterance, watch for streamed response.
 5. **Logs**: in Logcat, filter on tag `AgentforceSDK` (the default for the scaffolded `AppLogger`) to see SDK loglines.
@@ -218,6 +216,8 @@ If the build fails, common causes:
 - Missing core library desugaring on Android Gradle Plugin <8.x.
 - Compose not enabled in the consuming module.
 - Salesforce Maven repo not added to `settings.gradle.kts`.
+- `AppAgentforceUIDelegate` missing the current `didReceiveResponse(message, conversation)` callback.
+- `Navigation` implementation missing the target-aware `goto(destination, target, replace)` overload.
 
 ## References
 

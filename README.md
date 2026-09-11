@@ -116,6 +116,8 @@ dependencyResolutionManagement {
         maven { url = uri("https://opensource.salesforce.com/AgentforceMobileSDK-Android/agentforce-sdk-repository") }
         maven { url = uri("https://s3.amazonaws.com/inapp.salesforce.com/public/android") }
         maven { url = uri("https://s3.amazonaws.com/salesforce-async-messaging-experimental/public/android") }
+        maven { url('https://opensource.salesforce.com/SharedUI-Android/shared-ui-repository') }
+        maven { url('https://opensource.salesforce.com/SLDSIcons-Android/slds-icons-repository') }
     }
 }
 ```
